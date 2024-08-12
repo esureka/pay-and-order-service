@@ -1,0 +1,13 @@
+spring:
+  r2dbc:
+    url: r2dbc:pool:mysql://localhost:3306/payorder?useUnicode=true&serverTimezone=Asia/Seoul
+    username: root
+    password: Esperer123!
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+logging:
+  level:
+    org.springframework.r2dbc.core: debug
