@@ -6,13 +6,11 @@ import org.springframework.data.relational.core.mapping.Table
 @Table("users")
 class User(
     @field:Id
-    val id: Long,
+    val id: Long = 0,
 
     val name: String,
 
     val email: String,
-
-    val password: String,
 
     val userRole: UserRole
 )
