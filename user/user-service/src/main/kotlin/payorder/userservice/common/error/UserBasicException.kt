@@ -1,4 +1,4 @@
-package payorder.userservice.common
+package payorder.userservice.common.error
 
 import org.springframework.http.HttpStatus
 

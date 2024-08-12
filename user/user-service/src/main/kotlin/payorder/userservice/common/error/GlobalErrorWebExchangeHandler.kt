@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.codec.ServerCodecConfigurer
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.*
-import payorder.userservice.common.UserBasicException
 import reactor.core.publisher.Mono
 import java.net.ConnectException
 
