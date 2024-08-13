@@ -1,0 +1,52 @@
+version: '3'
+services:
+  mongodb:
+    image: mongo
+    ports:
+      - "${MONGO_PORT}:27017"
+    volumes:
+      - ./data/db:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 1234
+    container_name: "docker-mongodb"
+    env_file:
+      - .env
+  order-local-zookeeper:
+    image: wurstmeister/zookeeper:3.4.6
+    ports:
+      - 2181:2181
+  order-local-kafka:
+    image: niks123123/kafka:latest
+    environment:
+      - KAFKA_ADVERTISED_HOST_NAME=localhost
+      - KAFKA_ADVERTISED_PORT=9092
+      - KAFKA_ZOOKEEPER_CONNECT=order-local-zookeeper:2181
+      - KAFKA_CREATE_TOPICS=pay-complete:1:1
+    ports:
+      - 9092:9092
+    depends_on:
+      - payorder-local-zookeeper
+    healthcheck:
+      test: [ "CMD", "kafka-topics.sh", "--list", "--zookeeper", "local-zookeeper:2181" ]
+      interval: 5s
+      timeout: 10s
+      retries: 4
+  local-redis:
+    image: redis:6.0.2
+    command: redis-server /usr/local/etc/redis/redis.conf --port 6379
+    ports:
+      - 6379:6379
+    platform: linux/amd64
+    volumes:
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf:rw
+      - ./redis/users.acl:/usr/local/etc/redis/users.acl:rw
+  local-redis2:
+    image: redis:6.0.2
+    command: redis-server /usr/local/etc/redis/redis.conf --port 6379
+    ports:
+      - 6380:6379
+    platform: linux/amd64
+    volumes:
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf:rw
+      - ./redis/users.acl:/usr/local/etc/redis/users.acl:rw
