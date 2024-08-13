@@ -50,3 +50,12 @@ services:
     volumes:
       - ./redis/redis.conf:/usr/local/etc/redis/redis.conf:rw
       - ./redis/users.acl:/usr/local/etc/redis/users.acl:rw
+  mysql:
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: Esperer123!
+      MYSQL_DATABASE: payorder
+    volumes:
+      - ./mysql/data:/var/lib/mysql
