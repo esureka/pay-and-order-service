@@ -1,5 +1,5 @@
 package payorder.orderservice.internal.user
 
 interface UserApi {
-    fun queryById(id: Long): User
+    suspend fun queryById(id: Long): User
 }
