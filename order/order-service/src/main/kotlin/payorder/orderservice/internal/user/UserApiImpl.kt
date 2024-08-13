@@ -1,10 +1,12 @@
 package payorder.orderservice.internal.user
 
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
 import org.springframework.web.util.UriComponentsBuilder
+import payorder.orderservice.common.error.OrderBasicException
 
 @Component
 class UserApiImpl(
@@ -28,7 +30,7 @@ class UserApiImpl(
         return webClient.get()
             .uri(uri)
             .retrieve()
-            .onStatus({ it.is4xxClientError || it.is5xxServerError }, { throw RuntimeException("User Query API FAILED..") })
+            .onStatus({ it.is4xxClientError || it.is5xxServerError }, { throw OrderBasicException("User Query API FAILED..", HttpStatus.INTERNAL_SERVER_ERROR) })
             .awaitBody()
     }
 
