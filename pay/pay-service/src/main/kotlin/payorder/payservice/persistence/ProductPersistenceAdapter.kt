@@ -1,7 +1,7 @@
 package payorder.payservice.persistence
 
 import org.springframework.stereotype.Component
-import payorder.payservice.application.port.ProductPort
+import payorder.payservice.application.ProductPort
 
 @Component
 class ProductPersistenceAdapter(
