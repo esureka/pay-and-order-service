@@ -30,4 +30,10 @@ class ProductController(
         return productService.queryById(id)
     }
 
+    @GetMapping
+    @ResponseStatus(value = HttpStatus.OK)
+    suspend fun queryAllProducts(): List<ProductResponse> {
+        return productService.queryAllProducts()
+    }
+
 }

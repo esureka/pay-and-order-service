@@ -35,4 +35,14 @@ class ProductServiceImpl(
         )
     }
 
+    override suspend fun queryAllProducts(): List<ProductResponse> =
+        productPort.findAll().map {
+            ProductResponse(
+                id = it.id!!,
+                name = it.name,
+                price = it.price,
+                productCategory = it.category,
+                shopId = it.shopId
+            )
+        }
 }
