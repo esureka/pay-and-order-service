@@ -8,10 +8,11 @@ spring:
       uri: mongodb://root:1234@localhost/order?authSource=admin
 
 server:
-  port: 8081
+  port: 8082
 
 service:
   scheme: http
   user:
     port: 8080
     host: localhost
+
