@@ -5,7 +5,9 @@ spring:
       group-id: payorder
   data:
     mongodb:
-      uri: mongodb://root:1234@localhost/pay?authSource=admin
+      host: localhost
+      port: 27017
+      database: pay
 
 server:
   port: 8081

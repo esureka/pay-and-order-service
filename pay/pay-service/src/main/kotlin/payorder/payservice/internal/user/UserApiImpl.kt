@@ -20,7 +20,7 @@ class UserApiImpl(
 ) : UserApi {
 
     override suspend fun queryById(id: Long): User {
-        val uri = UriComponentsBuilder.fromPath("/id/{userId}")
+        val uri = UriComponentsBuilder.fromPath("/{userId}")
             .scheme(scheme)
             .host(userHost)
             .port(userPort)
