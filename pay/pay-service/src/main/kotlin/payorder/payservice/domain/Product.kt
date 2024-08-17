@@ -13,9 +13,10 @@ class Product(
     var amount: Int,
     val shopId: String
 ) {
-    fun minusAmount() {
+    fun minusAmount() : Product {
         if(this.amount == 0) throw PayBasicException("Amount is 0", HttpStatus.FORBIDDEN)
         this.amount--
+        return this
     }
 }
 

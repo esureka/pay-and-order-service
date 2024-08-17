@@ -1,19 +1,21 @@
 package payorder.payservice.application.product
 
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import payorder.payservice.application.ProductPort
 import payorder.payservice.application.product.event.OrderProductEvent
+import payorder.payservice.application.product.event.OrderProductEventProducer
 import payorder.payservice.common.error.PayBasicException
 import payorder.payservice.domain.Product
 import payorder.payservice.presentation.dto.CreateProductRequest
 import payorder.payservice.presentation.dto.ProductResponse
+import reactor.core.publisher.Mono
 
 @Service
 class ProductServiceImpl(
     private val productPort: ProductPort,
-    private val publisher: ApplicationEventPublisher
+    private val orderProductEventProducer: OrderProductEventProducer,
 ) : ProductService {
 
     override suspend fun createProduct(request: CreateProductRequest) {
@@ -52,11 +54,16 @@ class ProductServiceImpl(
             )
         }
 
-    override suspend fun orderProduct(id: String, userId: String) {
-        val product = productPort.findById(id)
-            ?: throw PayBasicException("Not Found Product", HttpStatus.NOT_FOUND)
-
-        product.minusAmount()
-        publisher.publishEvent(OrderProductEvent(productId = id, totalPrice = product.price, this))
+    @Transactional
+    override fun orderProduct(id: String, userId: Long) {
+        productPort.findByIdMono(id)
+            .switchIfEmpty(Mono.error(PayBasicException("Not Found Product", HttpStatus.NOT_FOUND)))
+            .map { it.minusAmount() }
+            .flatMap { productPort.saveMono(it) }
+            .map { orderProductEventProducer.sendEvent(toEvent(it, userId)) }
     }
+
+    private fun toEvent(product: Product, userId: Long) =
+        OrderProductEvent(productId = product.id!!, totalPrice = product.price, customerId = userId, this)
+
 }

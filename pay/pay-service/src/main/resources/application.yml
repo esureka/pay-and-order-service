@@ -3,6 +3,9 @@ spring:
     bootstrap-servers: localhost:9092
     consumer:
       group-id: payorder
+    producer:
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
   data:
     mongodb:
       host: localhost
