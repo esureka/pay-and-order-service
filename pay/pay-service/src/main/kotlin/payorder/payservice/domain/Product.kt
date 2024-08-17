@@ -1,6 +1,8 @@
 package payorder.payservice.domain
 
 import org.springframework.data.mongodb.core.mapping.Document
+import org.springframework.http.HttpStatus
+import payorder.payservice.common.error.PayBasicException
 
 @Document
 class Product(
@@ -8,8 +10,14 @@ class Product(
     val name: String,
     val price: Int,
     val category: ProductCategory,
+    var amount: Int,
     val shopId: String
-)
+) {
+    fun minusAmount() {
+        if(this.amount == 0) throw PayBasicException("Amount is 0", HttpStatus.FORBIDDEN)
+        this.amount--
+    }
+}
 
 enum class ProductCategory(val description: String) {
     FOOD("음식"),

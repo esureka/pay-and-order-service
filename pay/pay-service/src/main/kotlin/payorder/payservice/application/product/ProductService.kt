@@ -7,4 +7,5 @@ interface ProductService {
     suspend fun createProduct(request: CreateProductRequest)
     suspend fun queryById(id: String): ProductResponse
     suspend fun queryAllProducts(): List<ProductResponse>
+    suspend fun orderProduct(id: String, userId: String)
 }
