@@ -64,6 +64,6 @@ class ProductServiceImpl(
     }
 
     private fun toEvent(product: Product, userId: Long) =
-        OrderProductEvent(productId = product.id!!, totalPrice = product.price, customerId = userId, this)
+        OrderProductEvent(productId = product.id!!, totalPrice = product.price, customerId = userId)
 
 }

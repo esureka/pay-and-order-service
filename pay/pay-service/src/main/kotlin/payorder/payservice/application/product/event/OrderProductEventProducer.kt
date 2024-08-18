@@ -5,11 +5,11 @@ import org.springframework.stereotype.Component
 
 @Component
 class OrderProductEventProducer(
-    private val reactiveKafkaProducerTemplate: ReactiveKafkaProducerTemplate<String, OrderProductEvent>
+    private val template: ReactiveKafkaProducerTemplate<String, OrderProductEvent>
 ) {
 
     fun sendEvent(event: OrderProductEvent) {
-
+        template.send("order-product", event)
     }
 
 }
