@@ -11,7 +11,7 @@ import reactor.kafka.sender.SenderOptions
 @Configuration
 class KafkaConfig(
     @Value("\${spring.kafka.producer.bootstrap-servers}")
-    val bootStrapServer: String
+    val bootStrapServer: String = "localhost:9092"
 ) {
 
     @Bean

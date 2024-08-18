@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import payorder.payservice.application.product.ProductService
+import payorder.payservice.presentation.dto.CommonResponse
 import payorder.payservice.presentation.dto.CreateProductRequest
 import payorder.payservice.presentation.dto.ProductResponse
 
@@ -36,4 +37,13 @@ class ProductController(
         return productService.queryAllProducts()
     }
 
+    @PostMapping("/{id}")
+    @ResponseStatus(value = HttpStatus.CREATED)
+    fun orderProduct(@PathVariable id: String, @RequestBody userId: Long): CommonResponse {
+        productService.orderProduct(id, userId)
+        return CommonResponse("Order Product CREATED")
+    }
+
 }
+
+
