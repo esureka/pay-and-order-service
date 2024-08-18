@@ -1,61 +1,28 @@
-version: '3'
+version: '2'
+
 services:
-  mongodb:
-    image: mongo
-    ports:
-      - "localhost:27017"
-    volumes:
-      - ./data/db:/data/db
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: 1234
-    container_name: "docker-mongodb"
-    env_file:
-      - .env
-  order-local-zookeeper:
-    image: wurstmeister/zookeeper:3.4.6
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_INIT_LIMIT: 5
+      ZOOKEEPER_SYNC_LIMIT: 2
     ports:
-      - 2181:2181
-  order-local-kafka:
-    image: niks123123/kafka:latest
-    environment:
-      - KAFKA_ADVERTISED_HOST_NAME=localhost
-      - KAFKA_ADVERTISED_PORT=9092
-      - KAFKA_ZOOKEEPER_CONNECT=order-local-zookeeper:2181
-      - KAFKA_CREATE_TOPICS=pay-complete:1:1
-    ports:
-      - 9092:9092
+      - "22181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
     depends_on:
-      - payorder-local-zookeeper
-    healthcheck:
-      test: [ "CMD", "kafka-topics.sh", "--list", "--zookeeper", "local-zookeeper:2181" ]
-      interval: 5s
-      timeout: 10s
-      retries: 4
-  local-redis:
-    image: redis:6.0.2
-    command: redis-server /usr/local/etc/redis/redis.conf --port 6379
+      - zookeeper
     ports:
-      - 6379:6379
-    platform: linux/amd64
-    volumes:
-      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf:rw
-      - ./redis/users.acl:/usr/local/etc/redis/users.acl:rw
-  local-redis2:
-    image: redis:6.0.2
-    command: redis-server /usr/local/etc/redis/redis.conf --port 6379
-    ports:
-      - 6380:6379
-    platform: linux/amd64
-    volumes:
-      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf:rw
-      - ./redis/users.acl:/usr/local/etc/redis/users.acl:rw
-  mysql:
-    image: mysql:5.7
-    ports:
-      - "3306:3306"
+      - "29092:29092"
     environment:
-      MYSQL_ROOT_PASSWORD: Esperer123!
-      MYSQL_DATABASE: payorder
-    volumes:
-      - ./mysql/data:/var/lib/mysql
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
