@@ -1,4 +1,10 @@
 package payorder.orderservice.domain
 
-class OrderProduct {
-}
+import org.springframework.data.mongodb.core.mapping.Document
+
+@Document
+class OrderProduct(
+    val id: String? = null,
+    val orderId: String,
+    val productId: String
+)

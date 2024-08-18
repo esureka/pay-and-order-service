@@ -3,6 +3,17 @@ spring:
     bootstrap-servers: localhost:9092
     consumer:
       group-id: payorder
+      auto-offset-reset: earliest
+      properties:
+        spring:
+          json:
+            use:
+              type:
+                headers: 'false'
+            trusted:
+              packages: '*'
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
   data:
     mongodb:
       uri: mongodb://root:1234@localhost/order?authSource=admin
