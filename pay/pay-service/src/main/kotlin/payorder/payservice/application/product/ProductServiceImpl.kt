@@ -55,13 +55,13 @@ class ProductServiceImpl(
         }
 
     @Transactional
-    override fun orderProduct(id: String, userId: Long) =
-        productPort.findByIdMono(id)
+    override fun orderProduct(id: String, userId: Long) {
+        val product = productPort.findByIdMono(id)
+        product
             .switchIfEmpty(Mono.error(PayBasicException("Not Found Product", HttpStatus.NOT_FOUND)))
-            .map { it.minusAmount() }
-            .flatMap { productPort.saveMono(it) }
+            .flatMap { productPort.saveMono(it.minusAmount()) }
             .map { orderProductEventProducer.sendEvent(toEvent(it, userId)) }
-            .then()
+    }
 
 
     private fun toEvent(product: Product, userId: Long) =

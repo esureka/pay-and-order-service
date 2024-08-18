@@ -12,6 +12,7 @@ import payorder.payservice.application.product.ProductService
 import payorder.payservice.presentation.dto.CommonResponse
 import payorder.payservice.presentation.dto.CreateProductRequest
 import payorder.payservice.presentation.dto.ProductResponse
+import payorder.payservice.presentation.dto.UserIdRequest
 
 @RestController
 @RequestMapping("/product")
@@ -39,8 +40,8 @@ class ProductController(
 
     @PostMapping("/{id}")
     @ResponseStatus(value = HttpStatus.CREATED)
-    fun orderProduct(@PathVariable id: String, @RequestBody userId: Long): CommonResponse {
-        productService.orderProduct(id, userId)
+    fun orderProduct(@PathVariable id: String, @RequestBody userId: UserIdRequest): CommonResponse {
+        productService.orderProduct(id, userId.value)
         return CommonResponse("Order Product CREATED")
     }
 
