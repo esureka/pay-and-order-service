@@ -12,4 +12,5 @@ class ProductPersistenceAdapter(
 
     override fun findById(id: String): Mono<Product> =
         productRepository.findById(id)
+
 }
