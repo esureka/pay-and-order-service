@@ -1,4 +1,5 @@
 package payorder.orderservice.application.listener
 
-class OrderProductFailedEvent {
-}
+class OrderProductFailedEvent(
+    val productId: String,
+)
