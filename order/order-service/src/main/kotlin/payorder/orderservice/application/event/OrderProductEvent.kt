@@ -1,4 +1,4 @@
-package payorder.orderservice.application.listener
+package payorder.orderservice.application.event
 
 data class OrderProductEvent(
     val productId: String,

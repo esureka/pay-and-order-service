@@ -6,8 +6,8 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.core.reactive.ReactiveKafkaConsumerTemplate
 import org.springframework.kafka.core.reactive.ReactiveKafkaProducerTemplate
 import org.springframework.kafka.support.converter.StringJsonMessageConverter
-import payorder.orderservice.application.listener.OrderProductEvent
-import payorder.orderservice.application.listener.OrderProductFailedEvent
+import payorder.orderservice.application.event.OrderProductEvent
+import payorder.orderservice.application.event.OrderProductFailedEvent
 import reactor.kafka.receiver.ReceiverOptions
 import reactor.kafka.sender.SenderOptions
 
