@@ -18,6 +18,11 @@ class Product(
         this.amount--
         return this
     }
+
+    fun plusAmount(): Product {
+        this.amount++
+        return this
+    }
 }
 
 enum class ProductCategory(val description: String) {

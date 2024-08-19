@@ -54,13 +54,21 @@ class ProductServiceImpl(
             )
         }
 
-    @Transactional
+    @Transactional(rollbackFor = [Exception::class])
     override fun orderProduct(id: String, userId: Long) {
         val product = productPort.findByIdMono(id)
         product
             .switchIfEmpty(Mono.error(PayBasicException("Not Found Product", HttpStatus.NOT_FOUND)))
             .flatMap { productPort.saveMono(it.minusAmount()) }
             .map { orderProductEventProducer.sendEvent(toEvent(it, userId)) }
+    }
+
+    @Transactional(rollbackFor = [Exception::class])
+    override fun rollbackOrder(id: String) {
+        val product = productPort.findByIdMono(id)
+        product
+            .switchIfEmpty(Mono.error(PayBasicException("Not Found Product", HttpStatus.NOT_FOUND)))
+            .flatMap { productPort.saveMono(it.plusAmount()) }
     }
 
 

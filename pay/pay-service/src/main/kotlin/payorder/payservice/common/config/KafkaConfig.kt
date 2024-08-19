@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.core.reactive.ReactiveKafkaConsumerTemplate
 import org.springframework.kafka.core.reactive.ReactiveKafkaProducerTemplate
 import payorder.payservice.application.product.event.OrderProductEvent
+import payorder.payservice.application.product.event.OrderProductFailedEvent
 import reactor.kafka.receiver.ReceiverOptions
 import reactor.kafka.sender.SenderOptions
 
@@ -31,5 +32,9 @@ class KafkaConfig(
 
     @Bean
     fun orderProductKafkaTemplate(props: KafkaProperties): ReactiveKafkaProducerTemplate<String, OrderProductEvent> =
+        ReactiveKafkaProducerTemplate(SenderOptions.create(props.buildProducerProperties()))
+
+    @Bean
+    fun orderProductFailedKafkaTemplate(props: KafkaProperties): ReactiveKafkaProducerTemplate<String, OrderProductFailedEvent> =
         ReactiveKafkaProducerTemplate(SenderOptions.create(props.buildProducerProperties()))
 }
