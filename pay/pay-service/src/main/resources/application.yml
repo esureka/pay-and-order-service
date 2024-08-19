@@ -1,5 +1,6 @@
 spring:
   kafka:
+    bootstrap-servers: localhost:9092
     consumer:
       group-id: payorder
       auto-offset-reset: earliest
@@ -14,7 +15,6 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
     producer:
-      bootstrap-servers: localhost:29092
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
   data:

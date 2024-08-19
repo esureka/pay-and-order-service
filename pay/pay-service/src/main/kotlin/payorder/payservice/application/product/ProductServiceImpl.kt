@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import payorder.payservice.application.ProductPort
 import payorder.payservice.application.product.event.OrderProductEvent
-import payorder.payservice.application.product.event.OrderProductEventProducer
+import payorder.payservice.application.product.producer.OrderProductEventProducer
 import payorder.payservice.common.error.PayBasicException
 import payorder.payservice.domain.Product
 import payorder.payservice.presentation.dto.CreateProductRequest
