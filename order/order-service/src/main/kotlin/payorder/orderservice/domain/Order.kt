@@ -10,7 +10,8 @@ class Order(
     val id: String? = null,
     val totalPrice: Int,
     val orderDate: LocalDateTime,
-    val status: OrderStatus
+    val status: OrderStatus,
+    val customerId: Long
 )
 
 enum class OrderStatus(val description: String) {

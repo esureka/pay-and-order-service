@@ -4,7 +4,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Component
 import payorder.orderservice.application.OrderService
-import payorder.orderservice.application.event.OrderProductEvent
 
 @Component
 class OrderProductEventKafkaListener(
@@ -14,8 +13,8 @@ class OrderProductEventKafkaListener(
     private val log = LoggerFactory.getLogger(this::class.simpleName)
 
     @KafkaListener(topics = ["order-product"], groupId = "payorder")
-    fun orderProduct(orderProductEvent: OrderProductEvent) {
-        log.info("order product event consume = {}", orderProductEvent.productId)
-        orderService.orderProduct(orderProductEvent.productId, orderProductEvent.customerId)
+    fun orderProduct(productId: String) {
+        log.info("order product event consume = {}", productId)
+        orderService.orderProduct(productId)
     }
 }

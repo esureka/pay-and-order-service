@@ -13,10 +13,10 @@ spring:
             trusted:
               packages: '*'
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.StringDeserializer
     producer:
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.StringSerializer
   data:
     mongodb:
       uri: mongodb://root:1234@localhost/order?authSource=admin
