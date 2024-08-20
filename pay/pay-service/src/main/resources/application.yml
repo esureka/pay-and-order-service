@@ -13,9 +13,9 @@ spring:
             trusted:
               packages: '*'
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.StringDeserializer
     producer:
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      value-serializer: org.springframework.kafka.support.serializer.StringDeserializer
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
   data:
     mongodb:

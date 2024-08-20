@@ -4,10 +4,10 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import payorder.payservice.application.ProductPort
-import payorder.payservice.application.product.event.OrderProductEvent
 import payorder.payservice.application.product.producer.OrderProductEventProducer
 import payorder.payservice.common.error.PayBasicException
 import payorder.payservice.domain.Product
+import payorder.payservice.internal.user.UserUtil
 import payorder.payservice.presentation.dto.CreateProductRequest
 import payorder.payservice.presentation.dto.ProductResponse
 import reactor.core.publisher.Mono
@@ -16,6 +16,7 @@ import reactor.core.publisher.Mono
 class ProductServiceImpl(
     private val productPort: ProductPort,
     private val orderProductEventProducer: OrderProductEventProducer,
+    private val userUtil: UserUtil
 ) : ProductService {
 
     override suspend fun createProduct(request: CreateProductRequest) {
@@ -55,12 +56,13 @@ class ProductServiceImpl(
         }
 
     @Transactional(rollbackFor = [Exception::class])
-    override fun orderProduct(id: String, userId: Long) {
+    override fun orderProduct(id: String) {
         val product = productPort.findByIdMono(id)
         product
             .switchIfEmpty(Mono.error(PayBasicException("Not Found Product", HttpStatus.NOT_FOUND)))
             .flatMap { productPort.saveMono(it.minusAmount()) }
-            .map { orderProductEventProducer.sendEvent(toEvent(it, userId)) }
+            .map { orderProductEventProducer.sendEvent(id) }
+            .subscribe()
     }
 
     @Transactional(rollbackFor = [Exception::class])
@@ -69,10 +71,8 @@ class ProductServiceImpl(
         product
             .switchIfEmpty(Mono.error(PayBasicException("Not Found Product", HttpStatus.NOT_FOUND)))
             .flatMap { productPort.saveMono(it.plusAmount()) }
+            .subscribe()
     }
 
-
-    private fun toEvent(product: Product, userId: Long) =
-        OrderProductEvent(productId = product.id!!, totalPrice = product.price, customerId = userId)
 
 }

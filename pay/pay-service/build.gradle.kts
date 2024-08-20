@@ -26,6 +26,8 @@ dependencies {
 	implementation("org.apache.commons:commons-lang3:3.9")
 	implementation("org.springframework.kafka:spring-kafka")
 	implementation("io.projectreactor.kafka:reactor-kafka")
+	implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("com.nimbusds:nimbus-jose-jwt:9.21")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("io.projectreactor:reactor-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
