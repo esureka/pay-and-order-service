@@ -14,11 +14,6 @@ class KafkaConsumerConfig(
     private val kafkaProperties: KafkaProperties
 ) {
 
-    @Bean
-    fun orderProductEventListenerContainerFactory(listener: OrderProductEventKafkaListener): ConcurrentKafkaListenerContainerFactory<String, String> {
-        return makeFactory(listener)
-    }
-
     private fun makeFactory(listener: AcknowledgingMessageListener<String, String>): ConcurrentKafkaListenerContainerFactory<String, String> {
         return ConcurrentKafkaListenerContainerFactory<String, String>().apply {
             consumerFactory = consumerFactory()
@@ -32,4 +27,5 @@ class KafkaConsumerConfig(
     private fun consumerFactory(): ConsumerFactory<String, String> {
         return DefaultKafkaConsumerFactory(kafkaProperties.buildConsumerProperties())
     }
+
 }

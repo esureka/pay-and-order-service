@@ -11,14 +11,14 @@ import reactor.core.publisher.Mono
 import reactor.kafka.sender.SenderResult
 
 @Component
-class OrderProductFailedEventApplicationListener(
+class OrderProductFailedApplicationListener(
     private val eventPublisher: TransactionEventPublisher
 ) {
 
-    @Async(value = "orderProductFailedEventApplicationListener")
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMPLETION)
     fun onEvent(event: OrderProductFailedEvent): Mono<SenderResult<Void>> {
         val sagaKey = TokenGenerator.randomCharacter(16)
         return eventPublisher.publishEvent("order-product-failed", sagaKey, event)
     }
+
 }

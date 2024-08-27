@@ -26,7 +26,6 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
 	implementation("org.springframework.kafka:spring-kafka")
 	implementation("io.projectreactor.kafka:reactor-kafka")
-	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("com.nimbusds:nimbus-jose-jwt:9.21")
 	implementation("org.apache.commons:commons-lang3:3.9")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")

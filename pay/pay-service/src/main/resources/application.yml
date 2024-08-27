@@ -1,4 +1,6 @@
 spring:
+  main:
+    allow-circular-references: true
   kafka:
     bootstrap-servers: localhost:9092
     consumer:
@@ -13,10 +15,15 @@ spring:
             trusted:
               packages: '*'
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     producer:
-      value-serializer: org.springframework.kafka.support.serializer.StringDeserializer
+      retries: 1
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    listener:
+      ack-mode: manual
+      poll-timeout: 5000
+
   data:
     mongodb:
       host: localhost

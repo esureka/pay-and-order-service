@@ -19,13 +19,19 @@ class OrderProductFailedEventListener(
 
     private val log = LoggerFactory.getLogger(this::class.simpleName)
 
-    @KafkaListener(topics = ["order-product-failed"], groupId = "payorder", containerFactory = "orderProductFailedEventListenerContainerFactory")
+    @KafkaListener(
+        topics = ["order-product-failed"],
+        groupId = "payorder",
+        containerFactory = "orderProductFailedListenerContainerFactory"
+    )
     override fun onMessage(data: ConsumerRecord<String, String>, acknowledgment: Acknowledgment?) {
 
         val (key, value) = data.key() to objectMapper.readValue(data.value(), OrderProductFailedEvent::class.java)
 
         log.info("rollback transaction order product = {}", value.productId)
         productService.rollbackOrder(value.productId)
+        acknowledgment!!.acknowledge()
     }
 
 }
+

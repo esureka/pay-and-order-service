@@ -15,7 +15,7 @@ class KafkaConsumerConfig(
 ) {
 
     @Bean
-    fun orderProductFailedEventListenerContainerFactory(listener: OrderProductFailedEventListener): ConcurrentKafkaListenerContainerFactory<String, String> {
+    fun orderProductFailedListenerContainerFactory(listener: OrderProductFailedEventListener): ConcurrentKafkaListenerContainerFactory<String, String> {
         return makeFactory(listener)
     }
 
