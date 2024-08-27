@@ -40,15 +40,14 @@ class OrderServiceImpl(
 
     @Transactional(rollbackFor = [Exception::class])
     override fun orderProduct(productId: String) {
-        try {
-            productPort.findById(productId)
-                .switchIfEmpty(Mono.error(OrderBasicException("Not Found Product Order..", HttpStatus.NOT_FOUND)))
-                .flatMap { createOrder(it) }
-                .flatMap { createOrderProduct(it, productId) }
-                .subscribe()
-        } catch (e: Exception) {
-            orderProducer.sendFailedEvent(productId)
-        }
+        productPort.findById(productId)
+            .switchIfEmpty(Mono.error(OrderBasicException("Not Found Product Order..", HttpStatus.NOT_FOUND)))
+            .flatMap { createOrder(it) }
+            .flatMap { createOrderProduct(it, productId) }
+            .retry(3)
+            .doOnError { orderProducer.sendFailedEvent(productId) }
+            .subscribe()
+
     }
 
     private fun createOrder(product: Product): Mono<Order> =
