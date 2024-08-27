@@ -1,13 +1,13 @@
 package payorder.payservice.application.product
 
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import payorder.payservice.application.ProductPort
-import payorder.payservice.application.product.producer.OrderProductEventProducer
+import payorder.payservice.application.product.event.OrderProductEvent
 import payorder.payservice.common.error.PayBasicException
 import payorder.payservice.domain.Product
-import payorder.payservice.internal.user.UserUtil
 import payorder.payservice.presentation.dto.CreateProductRequest
 import payorder.payservice.presentation.dto.ProductResponse
 import reactor.core.publisher.Mono
@@ -15,8 +15,7 @@ import reactor.core.publisher.Mono
 @Service
 class ProductServiceImpl(
     private val productPort: ProductPort,
-    private val orderProductEventProducer: OrderProductEventProducer,
-    private val userUtil: UserUtil
+    private val applicationEventPublisher: ApplicationEventPublisher
 ) : ProductService {
 
     override suspend fun createProduct(request: CreateProductRequest) {
@@ -32,7 +31,8 @@ class ProductServiceImpl(
     }
 
     override suspend fun queryById(id: String): ProductResponse {
-        val product = productPort.findById(id) ?: throw PayBasicException("Not Found Product", HttpStatus.NOT_FOUND)
+        val product = productPort.findById(id)
+            ?: throw PayBasicException("Not Found Product", HttpStatus.NOT_FOUND)
         return ProductResponse(
             product.id!!,
             product.name,
@@ -56,12 +56,12 @@ class ProductServiceImpl(
         }
 
     @Transactional(rollbackFor = [Exception::class])
-    override fun orderProduct(id: String) {
+    override fun orderProduct(id: String, userId: Long) {
         val product = productPort.findByIdMono(id)
         product
             .switchIfEmpty(Mono.error(PayBasicException("Not Found Product", HttpStatus.NOT_FOUND)))
             .flatMap { productPort.saveMono(it.minusAmount()) }
-            .map { orderProductEventProducer.sendEvent(id) }
+            .map { applicationEventPublisher.publishEvent(OrderProductEvent(productId = id, userId = userId)) }
             .retry(3)
             .subscribe()
     }
@@ -74,6 +74,5 @@ class ProductServiceImpl(
             .flatMap { productPort.saveMono(it.plusAmount()) }
             .subscribe()
     }
-
 
 }

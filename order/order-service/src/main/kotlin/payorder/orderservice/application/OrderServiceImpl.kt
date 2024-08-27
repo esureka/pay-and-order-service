@@ -1,18 +1,18 @@
 package payorder.orderservice.application
 
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import payorder.orderservice.application.event.OrderProductFailedEvent
 import payorder.orderservice.application.port.OrderPort
 import payorder.orderservice.application.port.OrderProductPort
 import payorder.orderservice.application.port.ProductPort
-import payorder.orderservice.application.producer.OrderProducer
 import payorder.orderservice.common.error.OrderBasicException
 import payorder.orderservice.domain.Order
 import payorder.orderservice.domain.OrderProduct
 import payorder.orderservice.domain.OrderStatus
 import payorder.orderservice.domain.Product
-import payorder.orderservice.internal.user.UserUtil
 import payorder.orderservice.presentation.dto.OrderDto
 import reactor.core.publisher.Mono
 import java.time.LocalDateTime
@@ -22,8 +22,7 @@ class OrderServiceImpl(
     private val orderPort: OrderPort,
     private val orderProductPort: OrderProductPort,
     private val productPort: ProductPort,
-    private val orderProducer: OrderProducer,
-    private val userUtil: UserUtil
+    private val applicationEventPublisher: ApplicationEventPublisher
 ) : OrderService {
 
     override suspend fun queryById(id: String): OrderDto {
@@ -39,24 +38,24 @@ class OrderServiceImpl(
     }
 
     @Transactional(rollbackFor = [Exception::class])
-    override fun orderProduct(productId: String) {
+    override fun orderProduct(productId: String, userId: Long) {
         productPort.findById(productId)
             .switchIfEmpty(Mono.error(OrderBasicException("Not Found Product Order..", HttpStatus.NOT_FOUND)))
-            .flatMap { createOrder(it) }
+            .flatMap { createOrder(it, userId) }
             .flatMap { createOrderProduct(it, productId) }
             .retry(3)
-            .doOnError { orderProducer.sendFailedEvent(productId) }
+            .doOnError { applicationEventPublisher.publishEvent(OrderProductFailedEvent(productId)) }
             .subscribe()
 
     }
 
-    private fun createOrder(product: Product): Mono<Order> =
+    private fun createOrder(product: Product, userId: Long): Mono<Order> =
         orderPort.saveMono(
             Order(
                 totalPrice = product.price,
                 orderDate = LocalDateTime.now(),
                 status = OrderStatus.WAITING,
-                customerId = userUtil.getCurrentMemberIdMono().block()!!
+                customerId = userId
             )
         )
 

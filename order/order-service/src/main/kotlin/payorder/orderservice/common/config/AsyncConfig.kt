@@ -1,4 +1,4 @@
-package payorder.payservice.common.config
+package payorder.orderservice.common.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -12,8 +12,8 @@ class AsyncConfig{
 
     val threadPoolNotificationEvent = 8
 
-    @Bean(name = ["orderProductEventApplicationListener"])
-    fun orderProductEventApplicationListenerTaskExecutor(): ExecutorService {
+    @Bean(name = ["orderProductFailedEventApplicationListener"])
+    fun orderProductFailedEventApplicationListenerTaskExecutor(): ExecutorService {
         return Executors.newFixedThreadPool(threadPoolNotificationEvent)
     }
 }
