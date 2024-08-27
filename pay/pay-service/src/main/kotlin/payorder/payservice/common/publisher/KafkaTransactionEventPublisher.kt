@@ -15,5 +15,4 @@ class KafkaTransactionEventPublisher(
     override fun publishEvent(topic: String, key: String, event: Any): Mono<SenderResult<Void>> {
         return reactiveKafkaProducerTemplate.send(topic, key, objectMapper.writeValueAsString(event))
     }
-
 }

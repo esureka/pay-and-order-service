@@ -23,7 +23,11 @@ spring:
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
   data:
     mongodb:
-      uri: mongodb://root:1234@localhost/order?authSource=admin
+      host: localhost
+      port: 27017
+      database: pay
+
+
 
 server:
   port: 8082

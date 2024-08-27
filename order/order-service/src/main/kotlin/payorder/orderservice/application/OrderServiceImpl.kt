@@ -44,7 +44,10 @@ class OrderServiceImpl(
             .flatMap { createOrder(it, userId) }
             .flatMap { createOrderProduct(it, productId) }
             .retry(3)
-            .doOnError { applicationEventPublisher.publishEvent(OrderProductFailedEvent(productId)) }
+            .doOnError { e ->
+                applicationEventPublisher.publishEvent(OrderProductFailedEvent(productId))
+                throw e
+            }
             .subscribe()
 
     }

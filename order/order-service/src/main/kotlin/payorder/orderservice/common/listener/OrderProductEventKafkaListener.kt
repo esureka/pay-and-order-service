@@ -21,7 +21,7 @@ class OrderProductEventKafkaListener(
     @KafkaListener(topics = ["order-product"], groupId = "payorder")
     override fun onMessage(data: ConsumerRecord<String, String>, acknowledgment: Acknowledgment?) {
         val (key, value) = data.key() to objectMapper.readValue(data.value(), OrderProductEvent::class.java)
-        log.info("rollback transaction order product = {}", value.productId)
+        log.info("product transaction order product = {}", value.productId)
         orderService.orderProduct(value.productId, value.userId)
         acknowledgment!!.acknowledge()
     }

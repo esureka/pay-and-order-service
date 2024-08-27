@@ -62,6 +62,7 @@ class ProductServiceImpl(
             .switchIfEmpty(Mono.error(PayBasicException("Not Found Product", HttpStatus.NOT_FOUND)))
             .flatMap { productPort.saveMono(it.minusAmount()) }
             .map { applicationEventPublisher.publishEvent(OrderProductEvent(productId = id, userId = userId)) }
+            .doOnError { e -> throw e }
             .retry(3)
             .subscribe()
     }
