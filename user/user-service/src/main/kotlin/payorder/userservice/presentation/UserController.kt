@@ -39,4 +39,5 @@ class UserController(
     suspend fun queryUserEventById(@PathVariable id: String): UserEventDto {
         return userService.queryUserEventById(id)
     }
+
 }
