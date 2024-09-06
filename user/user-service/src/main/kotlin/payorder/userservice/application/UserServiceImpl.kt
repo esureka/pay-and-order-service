@@ -1,7 +1,9 @@
 package payorder.userservice.application
 
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import payorder.userservice.application.port.UserEventPort
 import payorder.userservice.application.port.UserPort
 import payorder.userservice.common.error.UserBasicException
@@ -20,6 +22,7 @@ class UserServiceImpl(
     private val userEventPort: UserEventPort
 ) : UserService {
 
+    @Transactional(readOnly = true)
     override suspend fun queryById(id: Long): UserDto {
         val user = userPort.findById(id)
             ?: throw UserBasicException("User Not Found..", HttpStatus.NOT_FOUND)
